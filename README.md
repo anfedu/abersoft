@@ -28,6 +28,7 @@ Step by step to running this apps :
   ```
 * eighth, register user first before hit api login  
   ```console
+	method: POST
   http://localhost:5001/api/v1/admin/register
 	raw: { "name": "nuril", "email": "nuril@gmail.com", password: "123456" }
   ```
