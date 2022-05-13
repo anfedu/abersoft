@@ -5,14 +5,11 @@ const { User } = require("../models");
 
 exports.register = async (req, res) => {
   try {
-    const { username, email, password, phone, address } = req.body;
+    const { email, password } = req.body;
 
     const schema = joi.object({
-      username: joi.string().min(3).required(),
-      email: joi.string().email().min(10).required(),
+      email: joi.string().email().min(8).required(),
       password: joi.string().min(8).required(),
-      phone: joi.string().min(8).max(20).required(),
-      address: joi.string().min(8).required(),
     });
 
     const { error } = schema.validate(req.body);
@@ -46,13 +43,8 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const user = await User.create({
-      username,
       email,
       password: hashedPassword,
-      phone,
-      address,
-      role: "User",
-      profile: "image.png",
     });
 
     const token = jwt.sign(
@@ -67,12 +59,7 @@ exports.register = async (req, res) => {
       message: "you have been registered",
       data: {
         id: user.id,
-        username,
         email,
-        phone,
-        address,
-        role: user.role,
-        profile: user.profile,
         token,
       },
     });
@@ -132,12 +119,7 @@ exports.login = async (req, res) => {
       message: "login success",
       data: {
         id: user.id,
-        username: user.username,
         email: user.email,
-        phone: user.phone,
-        address: user.address,
-        profile: user.profile,
-        role: user.role,
         token,
       },
     });

@@ -1,12 +1,8 @@
-post  http://localhost:5000/api/v1/admin/login
+post  http://localhost:5001/api/v1/admin/login
 Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTk3NzA1NDc2fQ.fQ8pGKkl6Tn15W-QUxXKhM3CpfD159xcTVS9AM8zNL0
 
 {
-  "counterQty": 8,
-  "total": 80000000,
-  "userId": 3,
-  "tripId": 3,
-  "status": "Waiting payment",
-  "attachment": "bri-syariah.png"
+	"email": "nuril@gmail.com",
+	"password": "123456789"
 }
