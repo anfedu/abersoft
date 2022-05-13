@@ -17,20 +17,6 @@ const {
   updateCountry,
   deleteCountry,
 } = require("../controller/country");
-const {
-  readTrip,
-  readOneTrip,
-  createTrip,
-  updateTrip,
-  deleteTrip,
-} = require("../controller/trip");
-const {
-  readAllTransaction,
-  readOneTransaction,
-  createTransaction,
-  updateTransaction,
-  deleteTransaction,
-} = require("../controller/transaction");
 
 // authentication routes
 router.post("/register", register);
@@ -48,19 +34,5 @@ router.get("/country/:id", readDetailCountry);
 router.post("/country", authAdmin, createCountry);
 router.patch("/country/:id", authAdmin, updateCountry);
 router.delete("/country/:id", authAdmin, deleteCountry);
-
-// routing trip
-router.get("/trip", readTrip);
-router.get("/trip/:id", readOneTrip);
-router.post("/trip", authAdmin, fileUpload(), createTrip);
-router.patch("/trip/:id", authAdmin, updateTrip);
-router.delete("/trip/:id", authAdmin, deleteTrip);
-
-// routing Transaction
-router.get("/transaction", readAllTransaction);
-router.get("/transaction/:id", readOneTransaction);
-router.post("/transaction", fileUpload(), createTransaction);
-router.patch("/transaction/:id", authAdmin, updateTransaction);
-router.delete("/transaction/:id", authAdmin, deleteTransaction);
 
 module.exports = router;
