@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
 
     if (error) {
       return res.status(500).send({
-        status: 500,
+        statusCode: 500,
         error: {
           message: error.details[0].message,
         },
@@ -31,9 +31,9 @@ exports.register = async (req, res) => {
 
     if (checkEmail) {
       return res.status(500).send({
-        status: 500,
+        statusCode: 500,
         error: {
-          status: 500,
+          statusCode: 500,
           message: "email already been existed",
         },
       });
@@ -55,7 +55,7 @@ exports.register = async (req, res) => {
     );
 
     res.status(200).send({
-      status: 200,
+      statusCode: 200,
       message: "you have been registered",
       data: {
         id: user.id,
@@ -81,7 +81,7 @@ exports.login = async (req, res) => {
 
     if (error) {
       return res.status(500).send({
-        status: 500,
+        statusCode: 500,
         error: {
           message: error.details[0].message,
         },
@@ -96,7 +96,7 @@ exports.login = async (req, res) => {
 
     if (!user)
       return res.status(500).send({
-        status: 500,
+        statusCode: 500,
         error: {
           message: "Email or password invalid",
         },
@@ -106,7 +106,7 @@ exports.login = async (req, res) => {
 
     if (!validPass)
       return res.status(500).send({
-        status: 500,
+        statusCode: 500,
         error: {
           message: "Email or password invalid",
         },
@@ -115,7 +115,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SCREET);
 
     res.status(200).send({
-      status: 200,
+      statusCode: 200,
       message: "login success",
       data: {
         id: user.id,
@@ -125,9 +125,95 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     res.status(500).send({
-      status: 500,
+      statusCode: 500,
       message: err.message,
     });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { email, oldPassword, newPassword, retryNewPassword } = req.body;
+
+    const schema = joi.object({
+      oldPassword: joi.string().min(8).required(),
+      newPassword: joi.string().min(8).required(),
+    });
+
+    const { error } = schema.validate(req.body);
+
+    if (error) {
+      return res.status(500).send({
+        statusCode: 500,
+        error: {
+          message: error.details[0].message,
+        },
+      });
+    }
+
+    if (newPassword != retryNewPassword) {
+      return res.status(500).send({
+        statusCode: 500,
+        error: {
+          message: "new password and retry pasword must save value",
+        },
+      });
+    }
+
+    const user = await User.findOne({
+      where: { email },
+      attributes: {
+        exclude: ["password", "createdAt", "updatedAt"],
+      },
+    });
+
+    const validPass = await bcrypt.compare(oldPassword, user.password);
+
+    if (!validPass)
+      return res.status(500).send({
+        statusCode: 500,
+        error: {
+          message: "Invalide password",
+        },
+      });
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    const userChange = await User.update(
+      {
+        email,
+        password: hashedPassword,
+      },
+      { where: { id } }
+    );
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+      },
+      process.env.JWT_SCREET
+    );
+
+    return res.status(200).send({
+      statusCode: 200,
+      message: "Password has been change",
+      result: null,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    return res.status(200).json({
+      statusCode: 200,
+      message: "Logout success",
+      result: null,
+    });
+  } catch (err) {
+    res.status(500).send({ statusCode: 500, message: "get data User failed" });
   }
 };
 
@@ -140,12 +226,12 @@ exports.readUsers = async (req, res) => {
     });
 
     res.status(200).send({
-      status: 200,
+      statusCode: 200,
       message: "get data users success",
       data: users,
     });
   } catch (err) {
-    res.status(500).send({ status: 500, message: err.message });
+    res.status(500).send({ statusCode: 500, message: err.message });
   }
 };
 
@@ -163,7 +249,7 @@ exports.readUser = async (req, res) => {
       data: user,
     });
   } catch (err) {
-    res.status(500).send({ status: 500, message: "get data User failed" });
+    res.status(500).send({ statusCode: 500, message: "get data User failed" });
   }
 };
 
@@ -175,9 +261,9 @@ exports.deleteUser = async (req, res) => {
         id: id,
       },
     });
-    res.status(200).send({ status: 200, message: "delete user success" });
+    res.status(200).send({ statusCode: 200, message: "delete user success" });
   } catch (err) {
-    res.status(500).send({ status: 500, message: err.message });
+    res.status(500).send({ statusCode: 500, message: err.message });
   }
 };
 

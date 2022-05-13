@@ -5,6 +5,8 @@ const { auth, authAdmin } = require("../middleware/auth");
 const {
   register,
   login,
+  changePassword,
+  logout,
   readUsers,
   readUser,
   deleteUser,
@@ -21,6 +23,8 @@ const {
 // authentication routes
 router.post("/admin/register", register);
 router.post("/admin/login", login);
+router.post("/admin/logout", logout);
+router.post("/admin/change-password", changePassword);
 
 // user routes
 router.get("/user/:id", auth, readUser);
