@@ -1,4 +1,4 @@
-patch  http://localhost:5000/api/v1/transaction/3
+post  http://localhost:5000/api/v1/admin/login
 Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTk3NzA1NDc2fQ.fQ8pGKkl6Tn15W-QUxXKhM3CpfD159xcTVS9AM8zNL0
 

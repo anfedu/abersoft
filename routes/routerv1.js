@@ -19,8 +19,8 @@ const {
 } = require("../controller/country");
 
 // authentication routes
-router.post("/register", register);
-router.post("/login", login);
+router.post("/admin/register", register);
+router.post("/admin/login", login);
 
 // user routes
 router.get("/user/:id", auth, readUser);
