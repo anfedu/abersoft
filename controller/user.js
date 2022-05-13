@@ -8,8 +8,8 @@ exports.register = async (req, res) => {
     const { email, password } = req.body;
 
     const schema = joi.object({
-      email: joi.string().email().min(8).required(),
-      password: joi.string().min(8).required(),
+      email: joi.string().email().min(6).required(),
+      password: joi.string().min(6).required(),
     });
 
     const { error } = schema.validate(req.body);
@@ -73,8 +73,8 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     const schema = joi.object({
-      email: joi.string().email().min(10).required(),
-      password: joi.string().min(8).required(),
+      email: joi.string().email().min(6).required(),
+      password: joi.string().min(6).required(),
     });
 
     const { error } = schema.validate(req.body);
@@ -136,8 +136,10 @@ exports.changePassword = async (req, res) => {
     const { email, oldPassword, newPassword, retryNewPassword } = req.body;
 
     const schema = joi.object({
-      oldPassword: joi.string().min(8).required(),
-      newPassword: joi.string().min(8).required(),
+      email: joi.string().min(6).required(),
+      oldPassword: joi.string().min(6).required(),
+      newPassword: joi.string().min(6).required(),
+      retryNewPassword: joi.string().min(6).required(),
     });
 
     const { error } = schema.validate(req.body);
@@ -155,17 +157,23 @@ exports.changePassword = async (req, res) => {
       return res.status(500).send({
         statusCode: 500,
         error: {
-          message: "new password and retry pasword must save value",
+          message: "retryNewPassword and newPassword must same value",
         },
       });
     }
 
-    const user = await User.findOne({
+    const userValue = await User.findOne({
       where: { email },
-      attributes: {
-        exclude: ["password", "createdAt", "updatedAt"],
-      },
     });
+    const user = userValue?.dataValues;
+
+    if (!user)
+      return res.status(500).send({
+        statusCode: 500,
+        error: {
+          message: "User does not exist",
+        },
+      });
 
     const validPass = await bcrypt.compare(oldPassword, user.password);
 
@@ -185,7 +193,7 @@ exports.changePassword = async (req, res) => {
         email,
         password: hashedPassword,
       },
-      { where: { id } }
+      { where: { id: user.id } }
     );
 
     const token = jwt.sign(

@@ -26,3 +26,8 @@ Step by step to running this apps :
   ```console
   yarn server
   ```
+* eighth, register user first before hit api login  
+  ```console
+  http://localhost:5001/api/v1/admin/register
+	{ "name": "nuril", "email": "nuril@gmail.com", password: "123456" }
+  ```
