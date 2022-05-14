@@ -4,7 +4,7 @@
     "password": "postgres",
     "database": "abersoft",
     "host": "localhost",
-    "port": "5431",
+    "port": "5432",
     "dialect": "postgres"
   },
   "production": {
