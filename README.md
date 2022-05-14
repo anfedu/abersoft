@@ -28,8 +28,8 @@ Step by step to running this apps :
   ```
 * eighth, register user first before hit api login  
   ```console
-		method: POST
-		url: http://localhost:5001/api/v1/admin/auth/register
-		raw: { "name": "nuril", "email": "nuril@gmail.com", password: "123456" }
+  method: POST
+  url: http://localhost:5001/api/v1/admin/auth/register
+  raw: { "name": "nuril", "email": "nuril@gmail.com", password: "123456" }
   ```
 * nineth, you can see all api route on file router/routerv1.js   
