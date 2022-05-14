@@ -13,12 +13,12 @@ const {
   updateUser,
 } = require("../controller/user");
 const {
-  readAllCountry,
-  readDetailCountry,
-  createCountry,
-  updateCountry,
-  deleteCountry,
-} = require("../controller/country");
+  readAllCustomer,
+  readDetailCustomer,
+  createCustomer,
+  updateCustomer,
+  deleteCustomer,
+} = require("../controller/customer");
 
 // authentication routes
 router.post("/admin/auth/register", register);
@@ -27,17 +27,11 @@ router.post("/admin/auth/logout", logout);
 router.post("/admin/auth/change-password", changePassword);
 router.get("/admin/auth/profile/:id", readUser);
 
-// user routes
-router.get("/user/:id", auth, readUser);
-router.delete("/user/:id", auth, deleteUser);
-router.get("/users", auth, readUsers);
-router.patch("/user/:id", auth, fileUpload(), updateUser);
-
 // routing country
-router.get("/country", readAllCountry);
-router.get("/country/:id", readDetailCountry);
-router.post("/country", authAdmin, createCountry);
-router.patch("/country/:id", authAdmin, updateCountry);
-router.delete("/country/:id", authAdmin, deleteCountry);
+router.post("/admin/customer", auth, createCustomer);
+router.get("/admin/customer", readAllCustomer);
+router.get("/admin/customer/:id", readDetailCustomer);
+router.patch("/admin/customer/:id", auth, updateCustomer);
+router.delete("/admin/customer/:id", auth, deleteCustomer);
 
 module.exports = router;
