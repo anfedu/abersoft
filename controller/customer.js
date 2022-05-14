@@ -1,4 +1,5 @@
 const { ProjectManager, Company, Customer, Worker } = require("../models");
+const joi = require("@hapi/joi");
 
 // <----- start Customer schema
 exports.readAllCustomer = async (req, res) => {
@@ -74,7 +75,7 @@ exports.readDetailCustomer = async (req, res) => {
       },
     });
     res.status(200).send({
-      status: 200,
+      statusCode: 200,
       message: "read detail customer success",
       result: customer,
     });
@@ -94,7 +95,7 @@ exports.createCustomer = async (req, res) => {
     if (!company || !projectManagers || !workers) {
       return res.status(500).send({
         statusCode: 500,
-        message: "Make sure your value is complete",
+        message: "Project Manager or Company or Worker can not be empty",
       });
     }
 
@@ -134,7 +135,7 @@ exports.createCustomer = async (req, res) => {
     const workerApi = await Worker.bulkCreate(workerValues);
 
     res.status(200).send({
-      status: 200,
+      statusCode: 200,
       message: "create Customer success",
       result: {
         company: companyApi.dataValues,
@@ -162,12 +163,14 @@ exports.updateCustomer = async (req, res) => {
       { where: { id: id } }
     );
     res.status(200).send({
-      status: 200,
-      message: "update customer success",
+      statusCode: 200,
+      message: "change status customer success",
       data: customer,
     });
   } catch (err) {
-    res.status(500).send({ status: 200, message: "update customer failed" });
+    res
+      .status(500)
+      .send({ statusCode: 500, message: "change status customer failed" });
   }
 };
 
@@ -178,7 +181,7 @@ exports.deleteCustomer = async (req, res) => {
       where: { id: id },
     });
     res.status(200).send({
-      status: 200,
+      statusCode: 200,
       message: "delete customer success",
       data: customer,
     });
@@ -186,5 +189,105 @@ exports.deleteCustomer = async (req, res) => {
     res.status(500).send({ status: 500, message: "delete customer failed" });
   }
 };
-// end customer -->
-// --------------------------------------------------------------------------->
+
+exports.changeStatusCustomer = async (req, res) => {
+  try {
+    const { isActive, customerId } = req.body;
+    const schema = joi.object({
+      isActive: joi.boolean().required(),
+      customerId: joi.number().required(),
+    });
+    const { error } = schema.validate(req.body);
+
+    const customer = await Customer.update(
+      {
+        isActive,
+      },
+      { where: { id: customerId }, returning: true }
+    );
+    res.status(200).send({
+      statusCode: 200,
+      message: "update customer success",
+      data: customer,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ statusCode: 200, message: "update customer failed" });
+  }
+};
+
+exports.createWorker = async (req, res) => {
+  try {
+    const { isActive, customerId, email, workerId } = req.body;
+    const schema = joi.object({
+      customerId: joi.number().required(),
+      workerId: joi.string().required(),
+      email: joi.string().email().required(),
+      isActive: joi.boolean().required(),
+    });
+    const { error } = schema.validate(req.body);
+
+    const worker = await Worker.create(req.body, {
+      returning: true,
+    });
+
+    res.status(200).send({
+      statusCode: 200,
+      message: "create worker success",
+      result: worker.dataValues,
+    });
+  } catch (err) {
+    res.status(500).send({ statusCode: 200, message: "create worker failed" });
+  }
+};
+
+exports.deleteWorker = async (req, res) => {
+  try {
+    const { customerId, workerId } = req.body;
+    const schema = joi.object({
+      customerId: joi.number().required(),
+      workerId: joi.string().required(),
+    });
+    const { error } = schema.validate(req.body);
+
+    const worker = await Worker.destroy({
+      where: { customerId, workerId },
+    });
+
+    res.status(200).send({
+      statusCode: 200,
+      message: "delete worker success",
+      result: worker.dataValues,
+    });
+  } catch (err) {
+    res.status(500).send({ statusCode: 500, message: "delete worker failed" });
+  }
+};
+
+exports.changeStatusWorker = async (req, res) => {
+  try {
+    const { isActive, customerId, workerId } = req.body;
+    const schema = joi.object({
+      isActive: joi.boolean().required(),
+      customerId: joi.number().required(),
+    });
+    const { error } = schema.validate(req.body);
+
+    const customer = await Worker.update(
+      {
+        isActive,
+      },
+      { where: { customerId, workerId }, returning: true }
+    );
+    res.status(200).send({
+      statusCode: 200,
+      message: "change status worker success",
+      data: customer,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ statusCode: 200, message: "change status worker failed" });
+  }
+};
