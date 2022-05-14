@@ -21,10 +21,11 @@ const {
 } = require("../controller/country");
 
 // authentication routes
-router.post("/admin/register", register);
-router.post("/admin/login", login);
-router.post("/admin/logout", logout);
-router.post("/admin/change-password", changePassword);
+router.post("/admin/auth/register", register);
+router.post("/admin/auth/login", login);
+router.post("/admin/auth/logout", logout);
+router.post("/admin/auth/change-password", changePassword);
+router.get("/admin/auth/profile/:id", readUser);
 
 // user routes
 router.get("/user/:id", auth, readUser);

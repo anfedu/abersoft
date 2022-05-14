@@ -5,9 +5,10 @@ const { User } = require("../models");
 
 exports.register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
 
     const schema = joi.object({
+      name: joi.string().min(3).required(),
       email: joi.string().email().min(6).required(),
       password: joi.string().min(6).required(),
     });
@@ -43,6 +44,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const user = await User.create({
+      name,
       email,
       password: hashedPassword,
     });
@@ -57,8 +59,9 @@ exports.register = async (req, res) => {
     res.status(200).send({
       statusCode: 200,
       message: "you have been registered",
-      data: {
+      result: {
         id: user.id,
+        name,
         email,
         token,
       },
@@ -253,8 +256,9 @@ exports.readUser = async (req, res) => {
       },
     });
     return res.status(200).json({
-      message: "get data User success",
-      data: user,
+      statusCode: 200,
+      message: "get profile success",
+      profile: user,
     });
   } catch (err) {
     res.status(500).send({ statusCode: 500, message: "get data User failed" });
